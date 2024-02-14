@@ -44,7 +44,7 @@ export interface DonationInterface extends Interface {
 
   encodeFunctionData(
     functionFragment: "donate",
-    values: [BigNumberish]
+    values: [BigNumberish, AddressLike, string, string, string, string]
   ): string;
   encodeFunctionData(functionFragment: "fee", values?: undefined): string;
   encodeFunctionData(
@@ -108,11 +108,32 @@ export interface DonationInterface extends Interface {
 }
 
 export namespace DonatedEvent {
-  export type InputTuple = [donateId: BigNumberish, amount: BigNumberish];
-  export type OutputTuple = [donateId: bigint, amount: bigint];
+  export type InputTuple = [
+    donateId: BigNumberish,
+    amount: BigNumberish,
+    message: string,
+    imageUrl: string,
+    donorName: string,
+    speakerId: string,
+    artist: AddressLike
+  ];
+  export type OutputTuple = [
+    donateId: bigint,
+    amount: bigint,
+    message: string,
+    imageUrl: string,
+    donorName: string,
+    speakerId: string,
+    artist: string
+  ];
   export interface OutputObject {
     donateId: bigint;
     amount: bigint;
+    message: string;
+    imageUrl: string;
+    donorName: string;
+    speakerId: string;
+    artist: string;
   }
   export type Event = TypedContractEvent<InputTuple, OutputTuple, OutputObject>;
   export type Filter = TypedDeferredTopicFilter<Event>;
@@ -188,7 +209,18 @@ export interface Donation extends BaseContract {
     event?: TCEvent
   ): Promise<this>;
 
-  donate: TypedContractMethod<[donateId: BigNumberish], [void], "payable">;
+  donate: TypedContractMethod<
+    [
+      donateId: BigNumberish,
+      artist: AddressLike,
+      donateMessage: string,
+      imageUrl: string,
+      donorName: string,
+      speakerId: string
+    ],
+    [void],
+    "payable"
+  >;
 
   fee: TypedContractMethod<[], [bigint], "view">;
 
@@ -222,7 +254,18 @@ export interface Donation extends BaseContract {
 
   getFunction(
     nameOrSignature: "donate"
-  ): TypedContractMethod<[donateId: BigNumberish], [void], "payable">;
+  ): TypedContractMethod<
+    [
+      donateId: BigNumberish,
+      artist: AddressLike,
+      donateMessage: string,
+      imageUrl: string,
+      donorName: string,
+      speakerId: string
+    ],
+    [void],
+    "payable"
+  >;
   getFunction(
     nameOrSignature: "fee"
   ): TypedContractMethod<[], [bigint], "view">;
@@ -274,7 +317,7 @@ export interface Donation extends BaseContract {
   >;
 
   filters: {
-    "Donated(uint256,uint256)": TypedContractEvent<
+    "Donated(uint256,uint256,string,string,string,string,address)": TypedContractEvent<
       DonatedEvent.InputTuple,
       DonatedEvent.OutputTuple,
       DonatedEvent.OutputObject
