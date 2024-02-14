@@ -10,19 +10,34 @@ contract Donation is ReentrancyGuardUpgradeable, OwnableUpgradeable {
     uint public fee;
     uint private feeFund;
 
-    // @dev _fee is 0-100
+    // @dev _fee is 0-1000 (0.0 - 100.0%)
     function initialize(uint _fee) external initializer {
         fee = _fee;
         __Ownable_init(msg.sender);
     }
 
-    event Donated(uint indexed donateId, uint amount);
+    event Donated(
+        uint indexed donateId,
+        uint amount,
+        string message,
+        string imageUrl,
+        string donorName,
+        string speakerId,
+        address artist
+    );
 
-    function donate(uint donateId) external payable {
-        balances[msg.sender] += msg.value * (100 - fee) / 100;
-        feeFund += msg.value * (fee) / 100;
+    function donate(
+        uint donateId,
+        address artist,
+        string memory donateMessage,
+        string memory imageUrl,
+        string memory donorName,
+        string memory speakerId
+    ) external payable {
+        balances[artist] += msg.value * (1000 - fee) / 1000;
+        feeFund += msg.value * (fee) / 1000;
 
-        emit Donated(donateId, msg.value);
+        emit Donated(donateId, msg.value, donateMessage, imageUrl, donorName, speakerId, artist);
     }
 
     function withdrawDonates(uint _value) public nonReentrant {
