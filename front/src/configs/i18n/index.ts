@@ -1,0 +1,1 @@
+export { TITLES } from './titles.i18n';
